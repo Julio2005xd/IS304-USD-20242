@@ -6,3 +6,4 @@ Agregar metodos para aperturar cuentas, realizar consignaciones y retiros contro
 Crear un menú para crear objetos y realizar las diversas operaciones referidas.
 
 '''
+print("Hola mundo")

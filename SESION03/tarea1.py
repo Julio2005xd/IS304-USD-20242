@@ -9,19 +9,13 @@ Crear un menú para crear objetos y realizar las diversas operaciones referidas.
 from datetime import date
 
 class CuentaBancaria:
-    numeroCta = 0
-    nombreCliente = ""
-    fechaApertura = ""
-    saldo = 0
-    
     def __init__(self, numeroCta, nombreCliente, fechaApertura, saldo) -> None:
         self.__numeroCta = numeroCta
         self.__nombreCliente = nombreCliente
         self.__fechaApertura = fechaApertura
         self.__saldo = saldo
-        
+    
     def set_numeroCta(self, numeroCta):
-        # Puedes agregar validaciones si es necesario
         self.__numeroCta = numeroCta
     
     def set_nombreCliente(self, nombreCliente):
@@ -35,7 +29,7 @@ class CuentaBancaria:
             self.__saldo = saldo
         else:
             print("El saldo no puede ser negativo.")
-
+    
     def get_numeroCta(self):
         return self.__numeroCta
 
@@ -50,66 +44,83 @@ class CuentaBancaria:
     
     @classmethod
     def aperturarCuenta(cls):
-        numeroCta = input(f"Por favor digite el numero de cuenta")
-        nombreCliente = input(f"Por favor digite el nombre del titular de cuenta")
         while True:
-            saldo = input(f"Por favor digite el saldo inicial de su nueva cuenta (minimo $100000)")
-            nuevoSaldo = int(saldo)
-            if nuevoSaldo >= 100000:
-                obtenerFecha = date.today()
-                obtenerFecha.strftime("%d/%m/%Y")
-                nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, obtenerFecha, nuevoSaldo)
-                print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {nueva_cuenta.get_fechaApertura()} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de:{nueva_cuenta.get_saldo()}$.")
-                nueva_cuenta.menu()
-                return nueva_cuenta
-            else:
-                print("Por favor digite una cantidad igual o superior a 100000 para abrir su nueva cuenta")
-        
+            numeroCta = input("Por favor digite el número de cuenta: ")
+            if not numeroCta.isdigit():
+                print("El número de cuenta debe contener solo dígitos.")
+                continue
+            
+            nombreCliente = input("Por favor digite el nombre del titular de cuenta: ")
+            
+            while True:
+                try:
+                    saldo = int(input("Por favor digite el saldo inicial de su nueva cuenta (mínimo $100000): "))
+                    if saldo >= 100000:
+                        break
+                    else:
+                        print("Por favor, digite una cantidad igual o superior a $100000 para abrir su nueva cuenta.")
+                except ValueError:
+                    print("El saldo debe ser un número entero.")
+            
+            obtenerFecha = date.today().strftime("%d/%m/%Y")
+            nueva_cuenta = cls(numeroCta, nombreCliente, obtenerFecha, saldo)
+            print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creación de cuenta {nueva_cuenta.get_fechaApertura()} y número de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de: {nueva_cuenta.get_saldo()}$.")
+            nueva_cuenta.menu()
+            return nueva_cuenta
+    
     def consignaciones(self, cantidad):
         if cantidad > 0:
-            self.__saldo += cantidad
-            print(f"consignacion exitosa. Su nuevo saldo es: {self.get_saldo()}$")
+            nuevo_saldo = self.get_saldo() + cantidad
+            self.set_saldo(nuevo_saldo)
+            print(f"Consignación exitosa. Su nuevo saldo es: {self.get_saldo()}$.")
         else:
-            print("La cantidad a depositar debe ser positiva")     
-    
+            print("La cantidad a depositar debe ser positiva.")
+
     def retirar(self, cantidad):
-        if cantidad <= self.__saldo:
-            self.__saldo -= cantidad
-            print(f"Retiro exitoso. Su nuevo saldo es: {self.get_saldo()}$")
+        if cantidad <= self.get_saldo():
+            nuevo_saldo = self.get_saldo() - cantidad
+            self.set_saldo(nuevo_saldo)
+            print(f"Retiro exitoso. Su nuevo saldo es: {self.get_saldo()}$.")
         else:
-            print("La cantidad a retirar es mayor a su saldo actual, vuelva a intentarlo")
-        
+            print("La cantidad a retirar es mayor a su saldo actual.")
+            
     def menu(self):
         while True:
             print("(1) Realizar consignación")
             print("(2) Realizar retiro")
             print("(3) Consultar saldo")
             print("(4) Salir")
-            opcion = input("Escoge que accion deseas hacer el dia de hoy")
+            opcion = input("Escoge qué acción deseas hacer el día de hoy: ")
+            
             if opcion == '1':
-                cantidad = input("Digite la cantidad que deseas consignar")
-                cantidadEntero = int(cantidad)
-                if cantidadEntero > 0:
-                    self.consignaciones(cantidadEntero)
-                else:
-                    print("Por favor solo digite numeros positivos")
+                while True:
+                    try:
+                        cantidad = int(input("Digite la cantidad que deseas consignar: "))
+                        if cantidad > 0:
+                            self.consignaciones(cantidad)
+                            break
+                        else:
+                            print("Por favor, solo digite números positivos.")
+                    except ValueError:
+                        print("Entrada no válida, por favor digite un número entero.")
             elif opcion == '2':
-                cantidad = input("Por favor digite la cantidad a retirar: ")
-                cantidadEntero = int(cantidad)
-                if cantidadEntero >= 0:
-                    self.retirar(cantidadEntero)
-                elif cantidadEntero < 0:
-                    print("Lo sentimos, no puede retirar debido a que el valor del retiro supera al valor de su saldo")
-                else:
-                    print("Entrada no valida")
+                while True:
+                    try:
+                        cantidad = int(input("Por favor digite la cantidad a retirar: "))
+                        if cantidad >= 0:
+                            self.retirar(cantidad)
+                            break
+                        else:
+                            print("Por favor, solo digite números positivos.")
+                    except ValueError:
+                        print("Entrada no válida, por favor digite un número entero.")
             elif opcion == '3':
-                print(f"Su saldo actual es: {self.get_saldo()}$")
+                print(f"Su saldo actual es: {self.get_saldo()}$.")
             elif opcion == '4':
                 print("Gracias por usar el banco. Hasta luego.")
                 break
             else:
                 print("Opción no válida. Intente de nuevo.")
-        
 
 cuentas = []
 

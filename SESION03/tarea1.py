@@ -6,6 +6,8 @@ Agregar metodos para aperturar cuentas, realizar consignaciones y retiros contro
 Crear un menú para crear objetos y realizar las diversas operaciones referidas.
 
 '''
+from datetime import date
+
 class CuentaBancaria:
     numeroCta = 0
     nombreCliente = ""
@@ -30,13 +32,15 @@ class Menu:
     def __init__(self):
         self.cuentas = []
     
-    def aperturar_Cuenta(self, numeroCta, nombreCliente, fechaApertura, saldo):
-        nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, fechaApertura, saldo)
+    def aperturar_Cuenta(self, numeroCta, nombreCliente):
+        obtenerFecha = date.today()
+        obtenerFecha.strftime("%d/%m/%Y")
+        nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, obtenerFecha, 0)
         self.cuentas.append(nueva_cuenta)
-        print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {fechaApertura} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito.")
+        print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {nueva_cuenta.get_fechaApertura()} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de:{nueva_cuenta.get_saldo()}$.")
 
 mi_banco = Menu()
 print("Banco")
 numeroCta = input(f"Por favor digite el numero de cuenta")
 nombreCliente = input(f"Por favor digite el nombre del titular de cuenta")
-mi_banco.aperturar_Cuenta(numeroCta, nombreCliente, "2/3/2024", 2000)
+mi_banco.aperturar_Cuenta(numeroCta, nombreCliente)

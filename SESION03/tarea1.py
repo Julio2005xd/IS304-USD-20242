@@ -19,7 +19,23 @@ class CuentaBancaria:
         self.__nombreCliente = nombreCliente
         self.__fechaApertura = fechaApertura
         self.__saldo = saldo
+        
+    def set_numeroCta(self, numeroCta):
+        # Puedes agregar validaciones si es necesario
+        self.__numeroCta = numeroCta
     
+    def set_nombreCliente(self, nombreCliente):
+        self.__nombreCliente = nombreCliente
+    
+    def set_fechaApertura(self, fechaApertura):
+        self.__fechaApertura = fechaApertura
+    
+    def set_saldo(self, saldo):
+        if saldo >= 0:
+            self.__saldo = saldo
+        else:
+            print("El saldo no puede ser negativo.")
+
     def get_numeroCta(self):
         return self.__numeroCta
 
@@ -44,6 +60,7 @@ class CuentaBancaria:
                 obtenerFecha.strftime("%d/%m/%Y")
                 nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, obtenerFecha, nuevoSaldo)
                 print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {nueva_cuenta.get_fechaApertura()} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de:{nueva_cuenta.get_saldo()}$.")
+                nueva_cuenta.menu()
                 return nueva_cuenta
             else:
                 print("Por favor digite una cantidad igual o superior a 100000 para abrir su nueva cuenta")
@@ -51,14 +68,13 @@ class CuentaBancaria:
     def consignaciones(self, cantidad):
         if cantidad > 0:
             self.__saldo += cantidad
+            print(f"consignacion exitosa. Su nuevo saldo es: {self.get_saldo()}$")
         else:
             print("La cantidad a depositar debe ser positiva")     
     
     def retirar(self, cantidad):
-        saldo = CuentaBancaria.get_saldo()
         if cantidad <= self.__saldo:
             self.__saldo -= cantidad
-            return saldo
             print(f"Retiro exitoso. Su nuevo saldo es: {self.get_saldo()}$")
         else:
             print("La cantidad a retirar es mayor a su saldo actual, vuelva a intentarlo")
@@ -75,13 +91,17 @@ class CuentaBancaria:
                 cantidadEntero = int(cantidad)
                 if cantidadEntero > 0:
                     self.consignaciones(cantidadEntero)
-                    break
                 else:
                     print("Por favor solo digite numeros positivos")
             elif opcion == '2':
                 cantidad = input("Por favor digite la cantidad a retirar: ")
                 cantidadEntero = int(cantidad)
-                self.retirar(cantidadEntero)
+                if cantidadEntero >= 0:
+                    self.retirar(cantidadEntero)
+                elif cantidadEntero < 0:
+                    print("Lo sentimos, no puede retirar debido a que el valor del retiro supera al valor de su saldo")
+                else:
+                    print("Entrada no valida")
             elif opcion == '3':
                 print(f"Su saldo actual es: {self.get_saldo()}$")
             elif opcion == '4':
@@ -104,9 +124,12 @@ cuenta8 = CuentaBancaria(789012345, "Luis Fernandez", "2023-09-11", 180000)
 
 cuentas.extend([cuenta1, cuenta2, cuenta3, cuenta4, cuenta5, cuenta6, cuenta7, cuenta8])
 
-print("Bienvenido al banco")
+print("Bienvenido al banco por favor escoge una opcion")
 while True:
-    opcion = input("Digite 1 si es un nuevo usuario o 2 si es un cliente del banco")
+    print ("(1) Abrir cuenta")
+    print ("(2) Iniciar sesion")
+    print ("(3) Salir")
+    opcion = input()
     if opcion == "1":
         nueva_cuenta = CuentaBancaria.aperturarCuenta()
         cuentas.append(nueva_cuenta)
@@ -127,5 +150,8 @@ while True:
                 break  
             else:
                 print("Número de cuenta no encontrado, por favor vuelva a intentarlo.")
+    elif opcion == "3":
+        print ("Gracias por usar nuestros servicios, hasta luego")
+        break
     else:
         print("Caracter no valido, por favor vuelva a intentarlo")

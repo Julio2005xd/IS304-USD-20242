@@ -36,21 +36,33 @@ class CuentaBancaria:
     def aperturarCuenta(cls):
         numeroCta = input(f"Por favor digite el numero de cuenta")
         nombreCliente = input(f"Por favor digite el nombre del titular de cuenta")
-        obtenerFecha = date.today()
-        obtenerFecha.strftime("%d/%m/%Y")
-        nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, obtenerFecha, 0)
-        print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {nueva_cuenta.get_fechaApertura()} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de:{nueva_cuenta.get_saldo()}$.")
+        while True:
+            saldo = input(f"Por favor digite el saldo inicial de su nueva cuenta (minimo $100000)")
+            nuevoSaldo = int(saldo)
+            if nuevoSaldo >= 100000:
+                obtenerFecha = date.today()
+                obtenerFecha.strftime("%d/%m/%Y")
+                nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, obtenerFecha, nuevoSaldo)
+                print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {nueva_cuenta.get_fechaApertura()} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de:{nueva_cuenta.get_saldo()}$.")
+                break
+            else:
+                print("Por favor digite una cantidad igual o superior a 100000 para abrir su nueva cuenta")
         
-    def set_saldo(self, nuevoSaldo):
-        if nuevoSaldo > 0:
-            self.__saldo += nuevoSaldo
-        else:
-            print("El saldo no puede ser negativo")        
     def consignaciones(self, cantidad):
         if cantidad > 0:
             self.__saldo += cantidad
         else:
             print("La cantidad a depositar debe ser positiva")     
+    
+    @classmethod
+    def menu(cls):
+        while True:
+            print("Realizar consignación")
+            print("Realizar retiro")
+            print("Consultar saldo")
+            print("Salir")
+            input("Escoje que accion deseas hacer el dia de hoy")
+        
 
 cuentas = []
 
@@ -66,23 +78,26 @@ cuenta8 = CuentaBancaria(789012345, "Luis Fernandez", "2023-09-11", 180000)
 cuentas.extend([cuenta1, cuenta2, cuenta3, cuenta4, cuenta5, cuenta6, cuenta7, cuenta8])
 
 print("Bienvenido al banco")
-opcion = input("Digite 1 si es un nuevo usuario o 2 si es un cliente del banco")
-if opcion == "1":
-    nueva_cuenta = CuentaBancaria.aperturarCuenta()
-    cuentas.append(nueva_cuenta)
-elif opcion == "2":
-    cuenta_encontrada = None
+while True:
+    opcion = input("Digite 1 si es un nuevo usuario o 2 si es un cliente del banco")
+    if opcion == "1":
+        nueva_cuenta = CuentaBancaria.aperturarCuenta()
+        cuentas.append(nueva_cuenta)
+    elif opcion == "2":
+        cuenta_encontrada = None
     
-    while True:
-        numCuenta = input("Por favor, digite el número de su cuenta: ")
+        while True:
+            numCuenta = input("Por favor, digite el número de su cuenta: ")
         
-        for cuenta in cuentas:
-            if str(cuenta.get_numeroCta()) == numCuenta:
-                cuenta_encontrada = cuenta
-                break
+            for cuenta in cuentas:
+                if str(cuenta.get_numeroCta()) == numCuenta:
+                    cuenta_encontrada = cuenta
+                    break
         
-        if cuenta_encontrada:
-            print(f"Bienvenid@ {cuenta_encontrada.get_nombreCliente()}, su saldo actual esta en: {cuenta_encontrada.get_saldo()}$")
-            break  
-        else:
-            print("Número de cuenta no encontrado, por favor vuelva a intentarlo.")
+            if cuenta_encontrada:
+                print(f"Bienvenid@ {cuenta_encontrada.get_nombreCliente()}, su saldo actual esta en: {cuenta_encontrada.get_saldo()}$")
+                break  
+            else:
+                print("Número de cuenta no encontrado, por favor vuelva a intentarlo.")
+    else:
+        print("Caracter no valido, por favor vuelva a intentarlo")

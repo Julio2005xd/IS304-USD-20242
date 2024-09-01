@@ -7,6 +7,36 @@ Crear un menú para crear objetos y realizar las diversas operaciones referidas.
 
 '''
 class CuentaBancaria:
-    def __numeroCta__(self, NumeroCuenta):
-        self__NumeroCuenta = NumeroCuenta
+    numeroCta = 0
+    nombreCliente = ""
+    fechaApertura = ""
+    saldo = 0
+    def __init__(self, numeroCta, nombreCliente, fechaApertura, saldo) -> None:
+        self.__numeroCta = numeroCta
+        self.__nombreCliente = nombreCliente
+        self.__fechaApertura = fechaApertura
+        self.__saldo = saldo
     
+    def get_numeroCta(self):
+        return self.__numeroCta
+    def get_nombreCliente(self):
+        return self.__nombreCliente
+    def get_fechaApertura(self):
+        return self.__fechaApertura
+    def get_saldo(self):
+        return self.__saldo
+        
+class Menu:
+    def __init__(self):
+        self.cuentas = []
+    
+    def aperturar_Cuenta(self, numeroCta, nombreCliente, fechaApertura, saldo):
+        nueva_cuenta = CuentaBancaria(numeroCta, nombreCliente, fechaApertura, saldo)
+        self.cuentas.append(nueva_cuenta)
+        print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creacion de cuenta {fechaApertura} y numero de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito.")
+
+mi_banco = Menu()
+print("Banco")
+numeroCta = input(f"Por favor digite el numero de cuenta")
+nombreCliente = input(f"Por favor digite el nombre del titular de cuenta")
+mi_banco.aperturar_Cuenta(numeroCta, nombreCliente, "2/3/2024", 2000)

@@ -1,10 +1,5 @@
 '''
-Tarea para antes de la  próxima clase:
-Crear un programa en Python que cree una clase denominada CuentaBancaria. Agregar encapsulamiento y sobrecarga del constructor de clase, asi como los métodos get y set requeridos para gestionar los atributos de dicha clase.
-Los atributos de la clase debern ser: __numeroCta, __nombreCliente, __fechaApertura, __saldo.
-Agregar metodos para aperturar cuentas, realizar consignaciones y retiros controlados (es decir, no permitir consignaciones negativas, ni retiros superiores al saldo, las aperturas deben exigir un valor inicial mínimo de 100 mil pesos).
-Crear un menú para crear objetos y realizar las diversas operaciones referidas.
-
+Programa de sistema de banco
 '''
 from datetime import date
 
@@ -45,26 +40,26 @@ class CuentaBancaria:
     @classmethod
     def aperturarCuenta(cls):
         while True:
-            numeroCta = input("Por favor digite el número de cuenta: ")
+            numeroCta = input("Por favor, ingrese el número de cuenta: ")
             if not numeroCta.isdigit():
                 print("El número de cuenta debe contener solo dígitos.")
                 continue
             
-            nombreCliente = input("Por favor digite el nombre del titular de cuenta: ")
+            nombreCliente = input("Por favor, ingrese el nombre del titular de la cuenta: ")
             
             while True:
                 try:
-                    saldo = int(input("Por favor digite el saldo inicial de su nueva cuenta (mínimo $100000): "))
+                    saldo = int(input("Por favor, ingrese el saldo inicial de su nueva cuenta (mínimo $100000): "))
                     if saldo >= 100000:
                         break
                     else:
-                        print("Por favor, digite una cantidad igual o superior a $100000 para abrir su nueva cuenta.")
+                        print("Por favor, ingrese una cantidad igual o superior a $100000 para abrir su nueva cuenta.")
                 except ValueError:
                     print("El saldo debe ser un número entero.")
             
             obtenerFecha = date.today().strftime("%d/%m/%Y")
             nueva_cuenta = cls(numeroCta, nombreCliente, obtenerFecha, saldo)
-            print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creación de cuenta {nueva_cuenta.get_fechaApertura()} y número de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de: {nueva_cuenta.get_saldo()}$.")
+            print(f"Cuenta para {nueva_cuenta.get_nombreCliente()} con fecha de creación {nueva_cuenta.get_fechaApertura()} y número de cuenta {nueva_cuenta.get_numeroCta()} ha sido aperturada con éxito con un saldo inicial de: ${nueva_cuenta.get_saldo()}.")
             nueva_cuenta.menu()
             return nueva_cuenta
     
@@ -90,30 +85,30 @@ class CuentaBancaria:
             print("(2) Realizar retiro")
             print("(3) Consultar saldo")
             print("(4) Salir")
-            opcion = input("Escoge qué acción deseas hacer el día de hoy: ")
+            opcion = input("Seleccione la acción que desea realizar: ")
             
             if opcion == '1':
                 while True:
                     try:
-                        cantidad = int(input("Digite la cantidad que deseas consignar: "))
+                        cantidad = int(input("Ingrese la cantidad que desea consignar: "))
                         if cantidad > 0:
                             self.consignaciones(cantidad)
                             break
                         else:
-                            print("Por favor, solo digite números positivos.")
+                            print("Por favor, ingrese un número positivo.")
                     except ValueError:
-                        print("Entrada no válida, por favor digite un número entero.")
+                        print("Entrada no válida, por favor ingrese un número entero.")
             elif opcion == '2':
                 while True:
                     try:
-                        cantidad = int(input("Por favor digite la cantidad a retirar: "))
+                        cantidad = int(input("Ingrese la cantidad a retirar: "))
                         if cantidad >= 0:
                             self.retirar(cantidad)
                             break
                         else:
-                            print("Por favor, solo digite números positivos.")
+                            print("Por favor, ingrese un número positivo.")
                     except ValueError:
-                        print("Entrada no válida, por favor digite un número entero.")
+                        print("Entrada no válida, por favor ingrese un número entero.")
             elif opcion == '3':
                 print(f"Su saldo actual es: {self.get_saldo()}$.")
             elif opcion == '4':
@@ -135,10 +130,10 @@ cuenta8 = CuentaBancaria(789012345, "Luis Fernandez", "2023-09-11", 180000)
 
 cuentas.extend([cuenta1, cuenta2, cuenta3, cuenta4, cuenta5, cuenta6, cuenta7, cuenta8])
 
-print("Bienvenido al banco por favor escoge una opcion")
+print("Bienvenido al banco. Por favor, seleccione una opción:")
 while True:
     print ("(1) Abrir cuenta")
-    print ("(2) Iniciar sesion")
+    print ("(2) Iniciar sesión")
     print ("(3) Salir")
     opcion = input()
     if opcion == "1":
@@ -148,7 +143,7 @@ while True:
         cuenta_encontrada = None
     
         while True:
-            numCuenta = input("Por favor, digite el número de su cuenta: ")
+            numCuenta = input("Por favor, ingrese el número de su cuenta: ")
         
             for cuenta in cuentas:
                 if str(cuenta.get_numeroCta()) == numCuenta:
@@ -156,13 +151,13 @@ while True:
                     break
         
             if cuenta_encontrada:
-                print(f"Bienvenid@ {cuenta_encontrada.get_nombreCliente()}, su saldo actual esta en: {cuenta_encontrada.get_saldo()}$")
+                print(f"Bienvenido/a {cuenta_encontrada.get_nombreCliente()}, su saldo actual es: ${cuenta_encontrada.get_saldo()}.")
                 cuenta_encontrada.menu()
                 break  
             else:
-                print("Número de cuenta no encontrado, por favor vuelva a intentarlo.")
+                print("Número de cuenta no encontrado, por favor intente de nuevo.")
     elif opcion == "3":
         print ("Gracias por usar nuestros servicios, hasta luego")
         break
     else:
-        print("Caracter no valido, por favor vuelva a intentarlo")
+        print("Opción no válida, por favor intente de nuevo.")

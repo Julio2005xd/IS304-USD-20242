@@ -21,6 +21,7 @@
  * - Debes tener en cuenta los límites de la pantalla de juego.
 '''
 from typing import List, Tuple
+import time
 
 class Tetris:
     def __init__(self, filas: int, columnas: int) -> None:
@@ -47,6 +48,10 @@ class Tetris:
         for (x, y) in pieza:
             self.__tablero[x][y] = simbolo
     
+    def limpiar_pieza(self, pieza: List[Tuple[int, int]]) -> None:
+        for (x, y) in pieza:
+            self.__tablero[x][y] = '🔲'
+    
     def imprimir_tablero(self) -> None:
         for fila in self.__tablero:
             print(''.join(fila))
@@ -57,12 +62,17 @@ def main() -> None:
     columnas = 10
     
     juego = Tetris(filas, columnas)
+
     
-    pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]
-
-    juego.colocar_pieza(pieza, '🔳')
-
-    juego.imprimir_tablero()
+    while True:
+        for i in range(10):
+            pieza = [(0+i, 0), (1+i, 0), (1+i, 1), (1+i, 2)]
+            if i > 0:
+                pieza_anterior = [(0+i-1, 0), (1+i-1, 1), (1+i-1, 2), (1+i-1, 3)]
+                juego.limpiar_pieza(pieza_anterior)
+            juego.colocar_pieza(pieza, '🔳')
+            juego.imprimir_tablero()
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()

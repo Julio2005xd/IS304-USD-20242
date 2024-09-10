@@ -45,6 +45,10 @@ class Tetris:
     def generar_tablero(self) -> List[List[str]]:
         return [['🔲' for _ in range(self.__columnas)] for _ in range(self.__filas)]
     
+    def imprimir_tablero(self) -> None:
+        for fila in self.__tablero:
+            print(''.join(fila))
+    
     def colocar_pieza(self, pieza: List[Tuple[int, int]], simbolo: str) -> None:
         for (x, y) in pieza:
             self.__tablero[x][y] = simbolo
@@ -53,41 +57,54 @@ class Tetris:
         for (x, y) in pieza:
             self.__tablero[x][y] = '🔲'
     
-    def imprimir_tablero(self) -> None:
-        for fila in self.__tablero:
-            print(''.join(fila))
-        print()
+    
+    def es_valida(self, pieza):
+        for x, y in pieza:
+            if x < 0 or x >= self.__filas or y < 0 or y >= self.__columnas or self.__tablero[x][y] != ' ':
+                return False
+        return True
+    
+    def eliminar_lineas_completas(self):
+        nuevas_filas = [fila for fila in self.__tablero if ' ' in fila]
+        lineas_eliminadas = self.__filas - len(nuevas_filas)
+        nuevas_filas = [[' ' for _ in range(self.__columnas)] for _ in range(lineas_eliminadas)] + nuevas_filas
+        self.__tablero = nuevas_filas
 
 def main() -> None:
     filas = 10
     columnas = 10
     
     juego = Tetris(filas, columnas)
-    posicion_x = 0
-    posicion_y = 0
-    pieza = [(0, 4), (1, 4), (1, 5), (1, 6)]
-
+    pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]
+    juego.colocar_pieza(pieza, '🔳')
+    juego.imprimir_tablero()
+    
     while True:
-        if keyboard.is_pressed('left'):
-            nueva_pieza = juego.mover_pieza(pieza, 'left')
+        movimiento = input("Por favor digite su siguiente accion: ")
+        juego.limpiar_pieza(pieza)  # Limpiar la posición anterior de la pieza
+
+        if movimiento == 'a':
+            nueva_pieza = pieza = [(x + 1, y - 1) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
-        if keyboard.is_pressed('right'):
-            nueva_pieza = juego.mover_pieza(pieza, 'right')
+        elif movimiento == 'd':
+            nueva_pieza = pieza = [(x + 1, y + 1) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
-        nueva_pieza = juego.mover_pieza(pieza, 'down')
-        if juego.es_valida(nueva_pieza):
-            pieza = nueva_pieza
+        elif movimiento == 's':
+            nueva_pieza = pieza = [(x + 2, y) for (x, y) in pieza]
+            if juego.es_valida(nueva_pieza):
+                pieza = nueva_pieza
+
+        if any(y == 9 for (y, _) in pieza):  # Check if any coordinate reaches 10
+            juego.colocar_pieza(pieza, '🔳')  # Colocar la pieza en su nueva posición
+            juego.imprimir_tablero()
+            pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]  # Generate new piece
+            juego.colocar_pieza(pieza, '🔳')  # Colocar la nueva pieza en la posición inicial
         else:
-            juego.colocar_pieza(pieza, '🔳')
-            juego.eliminar_lineas_completas()
-            pieza = [(0, 4), (1, 4), (1, 5), (1, 6)]
-            if not juego.es_valida(pieza):
-                print("Game Over")
-                break
-        
-        juego.imprimir_tablero()
+            juego.colocar_pieza(pieza, '🔳')  # Colocar la pieza en su nueva posición
+            juego.imprimir_tablero()
+
         time.sleep(0.5)
 
 if __name__ == "__main__":

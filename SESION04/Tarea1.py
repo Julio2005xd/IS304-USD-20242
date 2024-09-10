@@ -22,6 +22,7 @@
 '''
 from typing import List, Tuple
 import time
+import keyboard
 
 class Tetris:
     def __init__(self, filas: int, columnas: int) -> None:
@@ -62,17 +63,32 @@ def main() -> None:
     columnas = 10
     
     juego = Tetris(filas, columnas)
+    posicion_x = 0
+    posicion_y = 0
+    pieza = [(0, 4), (1, 4), (1, 5), (1, 6)]
 
-    
     while True:
-        for i in range(10):
-            pieza = [(0+i, 0), (1+i, 0), (1+i, 1), (1+i, 2)]
-            if i > 0:
-                pieza_anterior = [(0+i-1, 0), (1+i-1, 1), (1+i-1, 2), (1+i-1, 3)]
-                juego.limpiar_pieza(pieza_anterior)
+        if keyboard.is_pressed('left'):
+            nueva_pieza = juego.mover_pieza(pieza, 'left')
+            if juego.es_valida(nueva_pieza):
+                pieza = nueva_pieza
+        if keyboard.is_pressed('right'):
+            nueva_pieza = juego.mover_pieza(pieza, 'right')
+            if juego.es_valida(nueva_pieza):
+                pieza = nueva_pieza
+        nueva_pieza = juego.mover_pieza(pieza, 'down')
+        if juego.es_valida(nueva_pieza):
+            pieza = nueva_pieza
+        else:
             juego.colocar_pieza(pieza, '🔳')
-            juego.imprimir_tablero()
-            time.sleep(2)
+            juego.eliminar_lineas_completas()
+            pieza = [(0, 4), (1, 4), (1, 5), (1, 6)]
+            if not juego.es_valida(pieza):
+                print("Game Over")
+                break
+        
+        juego.imprimir_tablero()
+        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()

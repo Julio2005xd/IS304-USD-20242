@@ -57,18 +57,27 @@ class Tetris:
         for (x, y) in pieza:
             self.__tablero[x][y] = '🔲'
     
-    
-    def es_valida(self, pieza):
+    def es_valida(self, pieza: List[Tuple[int, int]]) -> bool:
         for x, y in pieza:
-            if x < 0 or x >= self.__filas or y < 0 or y >= self.__columnas or self.__tablero[x][y] != ' ':
+            if x < 0 or x >= self.__filas or y < 0 or y >= self.__columnas or self.__tablero[x][y] != '🔲':
                 return False
         return True
     
-    def eliminar_lineas_completas(self):
-        nuevas_filas = [fila for fila in self.__tablero if ' ' in fila]
+    def eliminar_lineas_completas(self) -> None:
+        nuevas_filas = [fila for fila in self.__tablero if '🔲' in fila]
         lineas_eliminadas = self.__filas - len(nuevas_filas)
-        nuevas_filas = [[' ' for _ in range(self.__columnas)] for _ in range(lineas_eliminadas)] + nuevas_filas
+        nuevas_filas = [['🔲' for _ in range(self.__columnas)] for _ in range(lineas_eliminadas)] + nuevas_filas
         self.__tablero = nuevas_filas
+        
+    def rotar_pieza(self, pieza: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        # Rotar 90 grados en sentido horario alrededor del primer bloque
+        pivote = pieza[0]
+        nueva_pieza = []
+        for x, y in pieza:
+            nuevo_x = pivote[0] - (y - pivote[1])
+            nuevo_y = pivote[1] + (x - pivote[0])
+            nueva_pieza.append((nuevo_x, nuevo_y))
+        return nueva_pieza
 
 def main() -> None:
     filas = 10
@@ -80,32 +89,39 @@ def main() -> None:
     juego.imprimir_tablero()
     
     while True:
-        movimiento = input("Por favor digite su siguiente accion: ")
-        juego.limpiar_pieza(pieza)  # Limpiar la posición anterior de la pieza
+        movimiento = input("Por favor digite su siguiente accion (a: izquierda, d: derecha, s: abajo): ")
+        juego.limpiar_pieza(pieza)
 
         if movimiento == 'a':
-            nueva_pieza = pieza = [(x + 1, y - 1) for (x, y) in pieza]
+            nueva_pieza = [(x+1, y-1) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
         elif movimiento == 'd':
-            nueva_pieza = pieza = [(x + 1, y + 1) for (x, y) in pieza]
+            nueva_pieza = [(x+1, y+1) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
         elif movimiento == 's':
-            nueva_pieza = pieza = [(x + 2, y) for (x, y) in pieza]
+            nueva_pieza = [(x+2, y) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
-
-        if any(y == 9 for (y, _) in pieza):  # Check if any coordinate reaches 10
-            juego.colocar_pieza(pieza, '🔳')  # Colocar la pieza en su nueva posición
+        elif movimiento == 'r':
+            nueva_pieza = juego.rotar_pieza(pieza)
+            if juego.es_valida(nueva_pieza):
+                pieza = nueva_pieza
+        
+        if any(y == 9 for (y, _) in pieza) or not juego.es_valida([(x+1, y) for (x, y) in pieza]):  # Check if any coordinate reaches 10 or collides with another piece
+            juego.colocar_pieza(pieza, '🔳')  
             juego.imprimir_tablero()
-            pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]  # Generate new piece
-            juego.colocar_pieza(pieza, '🔳')  # Colocar la nueva pieza en la posición inicial
+            pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]  
+            juego.colocar_pieza(pieza, '🔳')  
+            
+            if any(x == 0 for (x, _) in pieza) or not juego.es_valida([(x-1, y) for (x, y) in pieza]):  # Check if any coordinate reaches 0 or collides with another piece
+                print("No se pueden generar nuevas piezas. Fin del juego.")
+                break
+        
         else:
-            juego.colocar_pieza(pieza, '🔳')  # Colocar la pieza en su nueva posición
+            juego.colocar_pieza(pieza, '🔳')  
             juego.imprimir_tablero()
-
-        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()

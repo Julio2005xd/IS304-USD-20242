@@ -21,8 +21,7 @@
  * - Debes tener en cuenta los límites de la pantalla de juego.
 '''
 from typing import List, Tuple
-import time
-import keyboard
+import random
 
 class Tetris:
     def __init__(self, filas: int, columnas: int) -> None:
@@ -48,6 +47,7 @@ class Tetris:
     def imprimir_tablero(self) -> None:
         for fila in self.__tablero:
             print(''.join(fila))
+        print()
     
     def colocar_pieza(self, pieza: List[Tuple[int, int]], simbolo: str) -> None:
         for (x, y) in pieza:
@@ -66,11 +66,12 @@ class Tetris:
     def eliminar_lineas_completas(self) -> None:
         nuevas_filas = [fila for fila in self.__tablero if '🔲' in fila]
         lineas_eliminadas = self.__filas - len(nuevas_filas)
+        if lineas_eliminadas > 0:
+            print()
         nuevas_filas = [['🔲' for _ in range(self.__columnas)] for _ in range(lineas_eliminadas)] + nuevas_filas
         self.__tablero = nuevas_filas
         
     def rotar_pieza(self, pieza: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
-        # Rotar 90 grados en sentido horario alrededor del primer bloque
         pivote = pieza[0]
         nueva_pieza = []
         for x, y in pieza:
@@ -78,6 +79,9 @@ class Tetris:
             nuevo_y = pivote[1] + (x - pivote[0])
             nueva_pieza.append((nuevo_x, nuevo_y))
         return nueva_pieza
+    
+    def tablero_lleno(self) -> bool:
+        return all(celda != '🔲' for celda in self.__tablero[0])
 
 def main() -> None:
     filas = 10
@@ -89,7 +93,7 @@ def main() -> None:
     juego.imprimir_tablero()
     
     while True:
-        movimiento = input("Por favor digite su siguiente accion (a: izquierda, d: derecha, s: abajo): ")
+        movimiento = input("Por favor digite su siguiente acción (a: izquierda, d: derecha, s: abajo, r: rotar): ")
         juego.limpiar_pieza(pieza)
 
         if movimiento == 'a':
@@ -101,7 +105,7 @@ def main() -> None:
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
         elif movimiento == 's':
-            nueva_pieza = [(x+2, y) for (x, y) in pieza]
+            nueva_pieza = [(x+1, y) for (x, y) in pieza]
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
         elif movimiento == 'r':
@@ -109,19 +113,24 @@ def main() -> None:
             if juego.es_valida(nueva_pieza):
                 pieza = nueva_pieza
         
-        if any(y == 9 for (y, _) in pieza) or not juego.es_valida([(x+1, y) for (x, y) in pieza]):  # Check if any coordinate reaches 10 or collides with another piece
+        if not juego.es_valida([(x+1, y) for (x, y) in pieza]):  
             juego.colocar_pieza(pieza, '🔳')  
-            juego.imprimir_tablero()
-            pieza = [(0, 0), (1, 0), (1, 1), (1, 2)]  
-            juego.colocar_pieza(pieza, '🔳')  
+            juego.eliminar_lineas_completas()
             
-            if any(x == 0 for (x, _) in pieza) or not juego.es_valida([(x-1, y) for (x, y) in pieza]):  # Check if any coordinate reaches 0 or collides with another piece
-                print("No se pueden generar nuevas piezas. Fin del juego.")
+            if juego.tablero_lleno():  
+                juego.imprimir_tablero()
+                print("Tablero lleno. Fin del juego.")
                 break
-        
+            numero_aleatorio = random.randint(0, columnas-3)  
+            pieza = [(0, numero_aleatorio), (1, numero_aleatorio), (1, numero_aleatorio + 1), (1, numero_aleatorio + 2)]
+            if not juego.es_valida(pieza):  
+                juego.imprimir_tablero()
+                print("No se puede colocar una nueva pieza. Fin del juego.")
+                break
         else:
             juego.colocar_pieza(pieza, '🔳')  
-            juego.imprimir_tablero()
+        
+        juego.imprimir_tablero()
 
 if __name__ == "__main__":
     main()
